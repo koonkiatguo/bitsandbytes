@@ -133,10 +133,10 @@ class CUDASetup:
                     self.add_log_entry('')
                     self.generate_instructions()
                     raise Exception('CUDA SETUP: Setup Failed!')
-                self.lib = ct.cdll.LoadLibrary(binary_path)
+                self.lib = ct.cdll.LoadLibrary(str(binary_path))
             else:
                 self.add_log_entry(f"CUDA SETUP: Loading binary {binary_path}...")
-                self.lib = ct.cdll.LoadLibrary(binary_path)
+                self.lib = ct.cdll.LoadLibrary(str(binary_path))
         except Exception as ex:
             self.add_log_entry(str(ex))
 
@@ -332,6 +332,9 @@ def evaluate_cuda_setup():
         print(('Welcome to bitsandbytes. For bug reports, please run\n\npython -m bitsandbytes\n\n'),
               ('and submit this information together with your error trace to: https://github.com/TimDettmers/bitsandbytes/issues'))
         print('='*80)
+
+    if torch.cuda.is_available(): return 'libbitsandbytes_cuda121.dll', None, None, None, None
+
     if not torch.cuda.is_available(): return 'libbitsandbytes_cpu.so', None, None, None, None
 
     cuda_setup = CUDASetup.get_instance()
